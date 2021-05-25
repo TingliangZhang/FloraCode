@@ -41,12 +41,14 @@ void loop() {
           myservo.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
+        oldstate = state;
       }
     else{
         for (pos = 135; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
         myservo.write(pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
         }
+        oldstate = state;
       }
   }
   // print the results to the Serial Monitor:
@@ -56,7 +58,7 @@ void loop() {
 
   // wait 2 milliseconds before the next loop for the analog-to-digital
   // converter to settle after the last reading:
-  delay(3000);
+//  delay(3000);
 
-  int oldstate = state;
+
 }
