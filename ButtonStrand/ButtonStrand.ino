@@ -10,10 +10,20 @@
 //   a LOGIC-LEVEL CONVERTER on the data line is STRONGLY RECOMMENDED.
 // (Skipping these may work OK on your workbench but can fail in the field)
 
+//  The circuit:
+//  - WS2812B Strand attached from pin 6 to ground
+//  - pushbutton attached to pin 2 from +5V
+
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
+
+// constants won't change. They're used here to set pin numbers:
+const int buttonPin = 2;     // the number of the pushbutton pin
+
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1:
@@ -37,6 +47,10 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 // setup() function -- runs once at startup --------------------------------
 
 void setup() {
+
+  // initialize the pushbutton pin as an input:
+  pinMode(buttonPin, INPUT);
+  
   // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
   // Any other board, you can remove this part (but no harm leaving it):
 #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
@@ -53,18 +67,29 @@ void setup() {
 // loop() function -- runs repeatedly as long as board is on ---------------
 
 void loop() {
-  // Fill along the length of the strip in various colors...
-  colorWipe(strip.Color(255,   0,   0), 50); // Red
-  colorWipe(strip.Color(  0, 255,   0), 50); // Green
-  colorWipe(strip.Color(  0,   0, 255), 50); // Blue
 
-  // Do a theater marquee effect in various colors...
-  theaterChase(strip.Color(127, 127, 127), 50); // White, half brightness
-  theaterChase(strip.Color(127,   0,   0), 50); // Red, half brightness
-  theaterChase(strip.Color(  0,   0, 127), 50); // Blue, half brightness
+  // read the state of the pushbutton value:
+  buttonState = digitalRead(buttonPin);
 
-  rainbow(10);             // Flowing rainbow cycle along the whole strip
-  theaterChaseRainbow(50); // Rainbow-enhanced theaterChase variant
+  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {
+    colorWipe(strip.Color(127, 127, 127), 100); // Fill along the length of the strip in various colors...
+  } else {
+    rainbow(1);             // Flowing rainbow cycle along the whole strip
+  }
+  
+//  // Fill along the length of the strip in various colors...
+//  colorWipe(strip.Color(255,   0,   0), 50); // Red
+//  colorWipe(strip.Color(  0, 255,   0), 50); // Green
+//  colorWipe(strip.Color(  0,   0, 255), 50); // Blue
+//
+//  // Do a theater marquee effect in various colors...
+//  theaterChase(strip.Color(127, 127, 127), 50); // White, half brightness
+//  theaterChase(strip.Color(127,   0,   0), 50); // Red, half brightness
+//  theaterChase(strip.Color(  0,   0, 127), 50); // Blue, half brightness
+//
+//  rainbow(10);             // Flowing rainbow cycle along the whole strip
+//  theaterChaseRainbow(50); // Rainbow-enhanced theaterChase variant
 }
 
 
