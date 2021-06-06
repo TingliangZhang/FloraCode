@@ -24,6 +24,9 @@ const int buttonPin = 2;     // the number of the pushbutton pin
 
 // variables will change:
 int buttonState = 0;         // variable for reading the pushbutton status
+int old_buttonState = 0;     // variable for the pushbutton old status
+int count =0;
+int prestate =0;
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1:
@@ -43,6 +46,7 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 
+uint32_t white = strip.Color(127, 127, 127);
 
 // setup() function -- runs once at startup --------------------------------
 
@@ -70,13 +74,38 @@ void loop() {
 
   // read the state of the pushbutton value:
   buttonState = digitalRead(buttonPin);
+  delay(20);
+  old_buttonState=buttonState;
+  //Removing shaking from push button
+  if((buttonState==HIGH)&&(old_buttonState==LOW)){
+    buttonState=LOW;
+    }
 
-  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {
-    colorWipe(strip.Color(127, 127, 127), 100); // Fill along the length of the strip in various colors...
+  // check if the pushbutton is pressed. If it is, then the buttonState is HIGH:
+  if (count<strip.numPixels()){
+    if (buttonState == HIGH && prestate == 0) {
+      strip.clear();                         //   Set all pixels in RAM to 0 (off)
+      strip.setPixelColor(count, white);         //  Set pixel's color (in RAM)
+      strip.show();                          //  Update strip to match
+      count++;
+//      delay(100);                           //  Pause for a moment
+      prestate = 1;
+    } else if(buttonState == LOW) {
+      prestate = 0;
+    }
   } else {
-    rainbow(1);             // Flowing rainbow cycle along the whole strip
+    count = 0;
   }
+
+
+
+  
+//  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+//  if (buttonState == HIGH) {
+//    colorWipe(strip.Color(127, 127, 127), 100); // Fill along the length of the strip in various colors...
+//  } else {
+//    rainbow(1);             // Flowing rainbow cycle along the whole strip
+//  }
   
 //  // Fill along the length of the strip in various colors...
 //  colorWipe(strip.Color(255,   0,   0), 50); // Red
